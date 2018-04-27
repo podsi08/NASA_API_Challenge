@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+section {
+    width: 100vw;
+    height: 100vw;
+}
+
+.welcome {
+    color: #79e0ee;
+    font-size: 5vw;
+    text-align: center;
+    line-height: 10vw;
+    background-size: cover;
+}
+
+body {
+    background-color: #0d0b4b;
+}
+
+.gallery div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.gallery img {
+    width: 350px;
+    height: 350px;
+    margin: 25px;
+}
+
+.btn_more {
+    width: 120px;
+    height: 30px;
+    background-color: #00a99d;
+    font-weight: bolder;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    left: 50%;
+    margin-left: -60px;
+}
