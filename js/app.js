@@ -2,16 +2,21 @@ $(function() {
     loadMarsPhotosFromServer();
     loadBackgroundPhoto();
     loadMorePhotos();
+    changePhotos();
 });
 
+let currentDate = new Date;
+let currentYear = currentDate.getFullYear();
+let currentMonth = currentDate.getMonth();
+console.log(currentDate, currentMonth, currentYear);
 
-var nasaMarsUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos";
-var dataUrl ="?earth_date=2018-4-1";
+let nasaMarsUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos";
+let dataUrl ="?earth_date=2018-5-3";
 //var cameraUrl ="?camera=fhaz"
-var apiKey = "&api_key=NQnFwQPnWWDlIP2UhpHiIBL9oF0ErBBEz2VrvMjZ";
-var fullUrl = nasaMarsUrl + dataUrl + apiKey;
+let apiKey = "&api_key=NQnFwQPnWWDlIP2UhpHiIBL9oF0ErBBEz2VrvMjZ";
+let fullUrl = nasaMarsUrl + dataUrl + apiKey;
 
-//ładowanie i dodanie 6-ciu zdjęć do galerii po załadowaniu strony
+//ładowanie i dodanie 5-ciu zdjęć do galerii po załadowaniu strony
 function loadMarsPhotosFromServer() {
 
     $.ajax({
@@ -20,7 +25,7 @@ function loadMarsPhotosFromServer() {
         console.log(resp.photos);
 
         //tworzę tabicę z url wybranych zdjęć
-        var photos = resp.photos.slice(0, 6).map(function(photo){
+        let photos = resp.photos.slice(0, 5).map(function(photo){
             return photo.img_src;
         });
 
@@ -32,7 +37,7 @@ function loadMarsPhotosFromServer() {
 
 //funkcja dodająca zdjęcia do galerii
 function addToGallery(photosArray) {
-    var gallery = $('.gallery__base');
+    let gallery = $('.gallery__base');
 
     gallery.append(photosArray.map(function(photo) {
         return $("<img>").attr("src", photo);
@@ -40,16 +45,16 @@ function addToGallery(photosArray) {
 
 }
 
-//ładowanie i dodawanie kolejnych 6-ciu zdjęć do galerii po kliknięciu w przycisk "load more"
+//ładowanie i dodawanie kolejnych 5-ciu zdjęć do galerii po kliknięciu w przycisk "load more"
 function loadMorePhotos() {
-    var moreBtn = $('.btn_more');
+    let moreBtn = $('.btn_more');
 
     moreBtn.one("click", function() {
         $.ajax({
             url: fullUrl
         }).done(function(resp) {
             console.log(resp.photos);
-            var photos = resp.photos.slice(24, 30).map(function(photo){
+            let photos = resp.photos.slice(6, 12).map(function(photo){
                 return photo.img_src;
             });
             moreBtn.hide();
@@ -57,6 +62,18 @@ function loadMorePhotos() {
         }).fail(function(err) {
             console.log(err);
         })
+    })
+}
+
+//TODO: napisać funkcję, która będzie pobierać datę z formularza, przekazywać do URL i pobierać nowe zdjęcia
+//pomijanie zera wiodącego: np. parseInt("03", 10);
+function changePhotos() {
+    let dateInput = $('#date');
+    let submit = $('#submit');
+
+    submit.on("click", function() {
+        let newDate = dateInput.val();
+
     })
 }
 
@@ -74,12 +91,12 @@ function loadBackgroundPhoto(){
 }
 
 function setBackground(photo) {
-    var mainSection = $('.welcome');
+    let headerPhoto = $('.welcome__photo');
     //ścieżka dla zdjęć z 1.04.2018
-    var path = "https://epic.gsfc.nasa.gov/archive/enhanced/2018/04/01/jpg/";
-    var image = path + photo + ".jpg";
+    let path = "https://epic.gsfc.nasa.gov/archive/enhanced/2018/04/01/jpg/";
+    let image = path + photo + ".jpg";
 
     console.log(image);
     //mainSection.css("background-color", "blue");
-    mainSection.css("background-image", "url(\"" + image + "\")");
+    headerPhoto.css("background-image", "url(\"" + image + "\")");
 }

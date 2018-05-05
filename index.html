@@ -3,15 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>NASA API Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Audiowide|Bungee+Inline" rel="stylesheet">
     <link rel="stylesheet" href="./css/main.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
-    <section class="welcome">NASA API Challenge</section>
-    <section class="gallery">
-        <div class="gallery__base"></div>
-        <button class="btn_more">Load More</zzz>
+    <header>
+        <div class="welcome container">
+            <div class="welcome__title">NASA API Challenge</div>
+            <div class="welcome__photo"></div>
+        </div>
+    </header>
+
+    <section>
+        <div class=" gallery container">
+            <div class="gallery__instruction">
+                Here you can watch some photos gathered by NASA's Curiosity yesterday.
+                To watch other photos choose a date. If you want load more photos, scroll down to
+                the bottom of the page and push the button.
+            </div>
+            <input type="date" id="date">
+            <input type="submit" value="Submit" id="submit">
+            <div class="gallery__base"></div>
+            <button class="btn_more">Load More</button>
+        </div>
     </section>
+
     <script src="./js/jquery-3.1.1.min.js"></script>
     <script src="./js/app.js"></script>
 </body>
