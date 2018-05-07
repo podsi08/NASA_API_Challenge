@@ -53,6 +53,16 @@
 				background-color: #00a99d;
 				border: solid 1px black;
 			}
+			.info {
+				text-align: center;
+				font-size: 1rem;
+				width: 50%;
+				color: #ff394f;
+				visibility: visible;
+			}
+			.info__invisible {
+				visibility: hidden;
+			}
 			.gallery__base {
 				width: 50%;
 				img {

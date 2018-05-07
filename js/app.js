@@ -1,9 +1,13 @@
 $(function() {
-    loadMarsPhotosFromServer();
+    loadMarsPhotosFromServer(fullMarsUrl);
     loadBackgroundPhoto();
-    loadMorePhotos();
+    loadMorePhotos(fullMarsUrl);
     changePhotos();
 });
+
+let gallery = $('.gallery__base');
+let moreBtn = $('.btn_more');
+
 
 //odczytywanie wczorajszej daty
 let todaysDate = new Date().getTime();
@@ -23,11 +27,11 @@ let apiKey = "api_key=NQnFwQPnWWDlIP2UhpHiIBL9oF0ErBBEz2VrvMjZ";
 
 let fullMarsUrl = nasaMarsUrl + dateMarsUrl + apiKey;
 
-//ładowanie i dodanie 5-ciu zdjęć do galerii po załadowaniu strony
-function loadMarsPhotosFromServer() {
 
+//ładowanie i dodanie 5-ciu zdjęć do galerii
+function loadMarsPhotosFromServer(url) {
     $.ajax({
-        url: fullMarsUrl
+        url: url
     }).done(function(resp) {
         console.log(resp.photos);
 
@@ -35,16 +39,16 @@ function loadMarsPhotosFromServer() {
         let photos = resp.photos.slice(0, 5).map(function(photo){
             return photo.img_src;
         });
-
         addToGallery(photos);
     }).fail(function(err) {
         console.log(err);
     })
 }
 
+
+
 //funkcja dodająca zdjęcia do galerii
 function addToGallery(photosArray) {
-    let gallery = $('.gallery__base');
 
     gallery.append(photosArray.map(function(photo) {
         return $("<img>").attr("src", photo);
@@ -53,15 +57,13 @@ function addToGallery(photosArray) {
 }
 
 //ładowanie i dodawanie kolejnych 5-ciu zdjęć do galerii po kliknięciu w przycisk "load more"
-function loadMorePhotos() {
-    let moreBtn = $('.btn_more');
-
+function loadMorePhotos(url) {
     moreBtn.one("click", function() {
         $.ajax({
-            url: fullMarsUrl
+            url: url
         }).done(function(resp) {
             console.log(resp.photos);
-            let photos = resp.photos.slice(6, 12).map(function(photo){
+            let photos = resp.photos.slice(5, 11).map(function(photo){
                 return photo.img_src;
             });
             moreBtn.hide();
@@ -72,36 +74,60 @@ function loadMorePhotos() {
     })
 }
 
-//TODO: napisać funkcję, która będzie pobierać datę z formularza, przekazywać do URL i pobierać nowe zdjęcia
-//pomijanie zera wiodącego: np. parseInt("03", 10);
+//funkcja zmieniająca zdjęcia w galerii po wybraniu nowej daty
 function changePhotos() {
     let dateInput = $('#date');
     let submit = $('#submit');
 
     submit.on("click", function() {
-        let newDate = dateInput.val();
+        let newDate = new Date(dateInput.val());
+        let newDateYear = newDate.getFullYear();
+        let newDateMonth = newDate.getMonth() + 1;
+        let newDateDay = newDate.getDate();
+
+        let info = $('.info');
+
+        //jeżeli została wybrana data dzisiejsza, z przyszłości lub żadna to zostanie wyświetlony komunikat, zdjęcia
+        //w galerii pozostaną niezmienione
+        if (newDate.getTime() > yesterdaysMsDate || dateInput.val() === '') {
+            info.toggleClass('info__invisible')
+        //po wybraniu poprawnej daty z przeszłości:
+        } else {
+            //pokaż guzik do ładowania kolejnych zdjęć
+            moreBtn.show();
+
+            //jeżeli wyświetlał się komunikat o złym wyborze daty, schowaj go
+            !info.hasClass('info__invisible') && info.addClass('info__invisible');
+
+            //usuwanie poprzednich zdjęć z galerii:
+            $(gallery).children().remove();
+
+            let newDateMarsUrl =`earth_date=${newDateYear}-${newDateMonth}-${newDateDay}&`;
+            let newFullMarsUrl = nasaMarsUrl + newDateMarsUrl + apiKey;
+
+            //załaduj 5 zdjęć z nowej daty
+            loadMarsPhotosFromServer(newFullMarsUrl);
+
+            //po kliknięciu w przycisk załaduj kolejne zdjęcia
+            loadMorePhotos(newFullMarsUrl);
+        }
 
     })
 }
 
 
-//dla zdjęć tła data musi być wcześniejsza niż z wczoraj (nie ma tak szybko dostępnych nowych zdjęć), będą to zdjęcia sprzed tygodnia
-let lastWeekMsDate = todaysDate - 7 * 24 * 60 * 60 * 1000;
-let lastWeekDate = new Date(lastWeekMsDate);
+//ZDJĘCIE TŁA
+//****************************************************************************************************************//
 
-let lastWeekYear = lastWeekDate.getFullYear();
-let lastWeekMonth = lastWeekDate.getMonth() + 1;
-let lastWeekDay = lastWeekDate.getDate();
-
-
-let lastWeekMonthZero = lastWeekMonth < 10 ? `0${lastWeekMonth}` : lastWeekMonth;
-let lastWeekDayZero = lastWeekDay < 10 ? `0${lastWeekDay}` : lastWeekDay;
-console.log(typeof yesterdaysMonthZero);
+//dla zdjęć tła na sztywno ustalam datę, z której są dostępne zdjęcia (z niektórych dni nie ma)
+let epicPhotoYear = '2018';
+let epicPhotoMonth = '05';
+let epicPhotoDay = '01';
 
 let nasaEpicUrl = "https://epic.gsfc.nasa.gov/api/enhanced/";
-let dateEpicUrl = `date/${lastWeekYear}-${lastWeekMonthZero}-${lastWeekDayZero}?`;
+let dateEpicUrl = `date/${epicPhotoYear}-${epicPhotoMonth}-${epicPhotoDay}?`;
 let fullEpicUrl = nasaEpicUrl + dateEpicUrl + apiKey;
-console.log(fullEpicUrl);
+
 //ładowanie zdjęcia dla tła po załadowaniu strony i ustawianie go jako tło
 
 function loadBackgroundPhoto(){
@@ -109,8 +135,8 @@ function loadBackgroundPhoto(){
         url: fullEpicUrl
     }).done(function(resp) {
         console.log(resp);
-        //wyświetlam losowo jedno z 13 zdjęć z 01.04
-        setBackground(resp[Math.floor(Math.random() * 13)].image);
+        //wyświetlam losowo jedno ze zdjęć z podanej daty
+        setBackground(resp[Math.floor(Math.random() * resp.length)].image);
     }).fail(function(err) {
         console.log(err);
     })
@@ -118,11 +144,8 @@ function loadBackgroundPhoto(){
 
 function setBackground(photo) {
     let headerPhoto = $('.welcome__photo');
-    //ścieżka dla zdjęć sprzed tygodnia
-    let path = `https://epic.gsfc.nasa.gov/archive/enhanced/${lastWeekYear}/${lastWeekMonthZero}/${lastWeekDayZero}/jpg/`;
+    //ścieżka dla zdjęć z wybranej daty
+    let path = `https://epic.gsfc.nasa.gov/archive/enhanced/${epicPhotoYear}/${epicPhotoMonth}/${epicPhotoDay}/jpg/`;
     let image = path + photo + ".jpg";
-
-    console.log(image);
-    //mainSection.css("background-color", "blue");
     headerPhoto.css("background-image", "url(\"" + image + "\")");
 }
