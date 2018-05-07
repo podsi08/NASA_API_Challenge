@@ -3,6 +3,7 @@ $(function() {
     loadBackgroundPhoto();
     loadMorePhotos(fullMarsUrl);
     changePhotos();
+    animatedRocket();
 });
 
 let gallery = $('.gallery__base');
@@ -148,4 +149,27 @@ function setBackground(photo) {
     let path = `https://epic.gsfc.nasa.gov/archive/enhanced/${epicPhotoYear}/${epicPhotoMonth}/${epicPhotoDay}/jpg/`;
     let image = path + photo + ".jpg";
     headerPhoto.css("background-image", "url(\"" + image + "\")");
+}
+
+
+//animacje przy scrollowaniu
+
+function animatedRocket() {
+    $(window).scroll(throttle())
+}
+
+
+function throttle(wait = 500) {
+    let image = $('.rocket_container').find('div');
+    let time = Date.now();
+    return function() {
+        if ((time + wait - Date.now()) < 0) {
+            image.removeClass('rocket').addClass('moving_rocket');
+            console.log('scroll');
+            time = Date.now();
+            setTimeout(() => {
+                image.removeClass('moving_rocket').addClass('rocket');
+            }, 2000)
+        }
+    }
 }
