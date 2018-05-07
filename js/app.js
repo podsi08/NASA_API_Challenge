@@ -5,22 +5,29 @@ $(function() {
     changePhotos();
 });
 
-let currentDate = new Date;
-let currentYear = currentDate.getFullYear();
-let currentMonth = currentDate.getMonth();
-console.log(currentDate, currentMonth, currentYear);
+//odczytywanie wczorajszej daty
+let todaysDate = new Date().getTime();
+let yesterdaysMsDate = todaysDate - 24 * 60 * 60 * 1000;
+let yesterdaysDate = new Date(yesterdaysMsDate);
 
-let nasaMarsUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos";
-let dataUrl ="?earth_date=2018-5-3";
+let yesterdaysYear = yesterdaysDate.getFullYear();
+let yesterdaysMonth = yesterdaysDate.getMonth() + 1;
+let yesterdaysDay = yesterdaysDate.getDate();
+
+
+let nasaMarsUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?";
+//do url przekazuje wczorajszą datę
+let dateMarsUrl =`earth_date=${yesterdaysYear}-${yesterdaysMonth}-${yesterdaysDay}&`;
 //var cameraUrl ="?camera=fhaz"
-let apiKey = "&api_key=NQnFwQPnWWDlIP2UhpHiIBL9oF0ErBBEz2VrvMjZ";
-let fullUrl = nasaMarsUrl + dataUrl + apiKey;
+let apiKey = "api_key=NQnFwQPnWWDlIP2UhpHiIBL9oF0ErBBEz2VrvMjZ";
+
+let fullMarsUrl = nasaMarsUrl + dateMarsUrl + apiKey;
 
 //ładowanie i dodanie 5-ciu zdjęć do galerii po załadowaniu strony
 function loadMarsPhotosFromServer() {
 
     $.ajax({
-        url: fullUrl
+        url: fullMarsUrl
     }).done(function(resp) {
         console.log(resp.photos);
 
@@ -51,7 +58,7 @@ function loadMorePhotos() {
 
     moreBtn.one("click", function() {
         $.ajax({
-            url: fullUrl
+            url: fullMarsUrl
         }).done(function(resp) {
             console.log(resp.photos);
             let photos = resp.photos.slice(6, 12).map(function(photo){
@@ -77,12 +84,31 @@ function changePhotos() {
     })
 }
 
+
+//dla zdjęć tła data musi być wcześniejsza niż z wczoraj (nie ma tak szybko dostępnych nowych zdjęć), będą to zdjęcia sprzed tygodnia
+let lastWeekMsDate = todaysDate - 7 * 24 * 60 * 60 * 1000;
+let lastWeekDate = new Date(lastWeekMsDate);
+
+let lastWeekYear = lastWeekDate.getFullYear();
+let lastWeekMonth = lastWeekDate.getMonth() + 1;
+let lastWeekDay = lastWeekDate.getDate();
+
+
+let lastWeekMonthZero = lastWeekMonth < 10 ? `0${lastWeekMonth}` : lastWeekMonth;
+let lastWeekDayZero = lastWeekDay < 10 ? `0${lastWeekDay}` : lastWeekDay;
+console.log(typeof yesterdaysMonthZero);
+
+let nasaEpicUrl = "https://epic.gsfc.nasa.gov/api/enhanced/";
+let dateEpicUrl = `date/${lastWeekYear}-${lastWeekMonthZero}-${lastWeekDayZero}?`;
+let fullEpicUrl = nasaEpicUrl + dateEpicUrl + apiKey;
+console.log(fullEpicUrl);
 //ładowanie zdjęcia dla tła po załadowaniu strony i ustawianie go jako tło
 
 function loadBackgroundPhoto(){
     $.ajax({
-        url: "https://epic.gsfc.nasa.gov/api/enhanced/date/2018-04-01?api_key=NQnFwQPnWWDlIP2UhpHiIBL9oF0ErBBEz2VrvMjZ"
+        url: fullEpicUrl
     }).done(function(resp) {
+        console.log(resp);
         //wyświetlam losowo jedno z 13 zdjęć z 01.04
         setBackground(resp[Math.floor(Math.random() * 13)].image);
     }).fail(function(err) {
@@ -92,8 +118,8 @@ function loadBackgroundPhoto(){
 
 function setBackground(photo) {
     let headerPhoto = $('.welcome__photo');
-    //ścieżka dla zdjęć z 1.04.2018
-    let path = "https://epic.gsfc.nasa.gov/archive/enhanced/2018/04/01/jpg/";
+    //ścieżka dla zdjęć sprzed tygodnia
+    let path = `https://epic.gsfc.nasa.gov/archive/enhanced/${lastWeekYear}/${lastWeekMonthZero}/${lastWeekDayZero}/jpg/`;
     let image = path + photo + ".jpg";
 
     console.log(image);

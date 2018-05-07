@@ -6,7 +6,8 @@
   "dependencies": {
     "gulp": "^3.9.1",
     "gulp-sass": "^3.2.0",
-    "gulp-sourcemaps": "^2.6.4"
+    "gulp-sourcemaps": "^2.6.4",
+    "moment": "^2.22.1"
   },
   "devDependencies": {},
   "scripts": {
