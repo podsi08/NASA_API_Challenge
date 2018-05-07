@@ -3,7 +3,7 @@ $(function() {
     loadBackgroundPhoto();
     loadMorePhotos(fullMarsUrl);
     changePhotos();
-    animatedRocket();
+    rocketParalax();
 });
 
 let gallery = $('.gallery__base');
@@ -154,22 +154,36 @@ function setBackground(photo) {
 
 //animacje przy scrollowaniu
 
-function animatedRocket() {
-    $(window).scroll(throttle())
+let rocketImage = $('.rocket');
+
+function rocketParalax() {
+    $(window).scroll(function() {
+        let scrolled = $(window).scrollTop();
+        console.log(scrolled, rocketImage);
+        rocketImage.each(function(){
+            let parallax = scrolled * $(this).data('speed');
+            $(this).css({'top': parallax});
+            console.log($(this).css('top'))
+        })
+    })
 }
 
+// function animatedRocket() {
+//     $(window).scroll(throttle())
+// }
 
-function throttle(wait = 500) {
-    let image = $('.rocket_container').find('div');
-    let time = Date.now();
-    return function() {
-        if ((time + wait - Date.now()) < 0) {
-            image.removeClass('rocket').addClass('moving_rocket');
-            console.log('scroll');
-            time = Date.now();
-            setTimeout(() => {
-                image.removeClass('moving_rocket').addClass('rocket');
-            }, 2000)
-        }
-    }
-}
+//
+// function throttle(wait = 5000) {
+//     let image = $('.rocket_container').find('div');
+//     let time = Date.now();
+//     return function() {
+//         if ((time + wait - Date.now()) < 0) {
+//             image.removeClass('rocket').addClass('moving_rocket');
+//             console.log('scroll');
+//             time = Date.now();
+//             setTimeout(() => {
+//                 image.removeClass('moving_rocket').addClass('rocket');
+//             }, 5000)
+//         }
+//     }
+// }
