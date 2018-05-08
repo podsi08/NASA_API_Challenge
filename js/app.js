@@ -88,10 +88,14 @@ function changePhotos() {
 
         let info = $('.info');
 
-        //jeżeli została wybrana data dzisiejsza, z przyszłości lub żadna to zostanie wyświetlony komunikat, zdjęcia
-        //w galerii pozostaną niezmienione
+        //po zatwierdzeniu daty poprzednie zdjęcia z galerii są usuwane:
+        $(gallery).children().remove();
+
+        //jeżeli została wybrana data dzisiejsza, z przyszłości lub żadna to zostanie wyświetlony komunikat, schwany też
+        //zostanie button do ładowania większej liczby zdjęć
         if (newDate.getTime() > yesterdaysMsDate || dateInput.val() === '') {
-            info.toggleClass('info__invisible')
+            info.hasClass('info__invisible') && info.removeClass('info__invisible');
+            moreBtn.hide();
         //po wybraniu poprawnej daty z przeszłości:
         } else {
             //pokaż guzik do ładowania kolejnych zdjęć
@@ -99,9 +103,6 @@ function changePhotos() {
 
             //jeżeli wyświetlał się komunikat o złym wyborze daty, schowaj go
             !info.hasClass('info__invisible') && info.addClass('info__invisible');
-
-            //usuwanie poprzednich zdjęć z galerii:
-            $(gallery).children().remove();
 
             let newDateMarsUrl =`earth_date=${newDateYear}-${newDateMonth}-${newDateDay}&`;
             let newFullMarsUrl = nasaMarsUrl + newDateMarsUrl + apiKey;
