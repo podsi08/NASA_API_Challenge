@@ -15,7 +15,7 @@
 			height: 65vh;
 			.welcome {
 				height: 100%;
-				padding: 1rem 0 3rem 0;
+				padding-top: 1rem;
 				.welcome__photo {
 					background-size: contain;
 					height: 100%;
@@ -46,8 +46,8 @@
 					top: 0;
 					background-image: url("../images/rocket-1717160_640.png");
 					background-size: cover;
-					width: 10vw;
-					height: 10vw;
+					width: 13vw;
+					height: 13vw;
 				}
 				&:first-child {
 					.rocket {
@@ -134,7 +134,7 @@
 				.welcome {
 					padding: 1rem 0 6rem 0;
 					.welcome__photo {
-						background-position: center -7vh;
+						background-position: center -3vh;
 					}
 					.welcome__title {
 						font-size: 7vh;
@@ -143,6 +143,10 @@
 				}
 			}
 			section {
+				.rocket {
+					width: 9vw;
+					height: 9vw;
+				}
 				.rocket_container {
 					width: 15%;
 					&:first-child {

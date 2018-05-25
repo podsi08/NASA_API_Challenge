@@ -10,7 +10,7 @@ let gallery = $('.gallery__base');
 let moreBtn = $('.btn_more');
 
 
-//odczytywanie wczorajszej daty
+//odczytywanie daty sprzed 3 dni
 let todaysDate = new Date().getTime();
 let yesterdaysMsDate = todaysDate - 24 * 60 * 60 * 1000;
 let yesterdaysDate = new Date(yesterdaysMsDate);
